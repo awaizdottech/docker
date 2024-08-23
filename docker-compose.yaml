@@ -1,0 +1,28 @@
+# docker compose automatically creates a network for the services used in the file
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo-data:/data/db
+      # the above container path is given by mongodb & is diff for other dbs
+  mongo-express:
+    image: mongo-express
+    restart: always
+    # above line is a way to make sure it runs properly as it depends on mongo
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
+      # this is another way that looks more optimised rather than running the mongo-express first then restarting it until mongodb builds
+volumes:
+  mongo-data:
+    # driver: local

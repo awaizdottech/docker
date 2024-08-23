@@ -1,0 +1,58 @@
+courses:
+  course_name: "nice"
+  version: 1.5
+  price: &price_variable 1999
+  is_public: true
+  release_date: 2024-04-12 12:23:23
+  pre_enroll: null
+  tags:
+    - python
+    - web dev
+  course_ta: ["voxelli", "zubair", "someone"]
+  ta_details:
+    - name: "voxelli"
+      email: "x@y.z"
+    - { name: "zubair", email: "a@b.c" }
+  short_desc: >
+    here is a short 
+    description for MERN course
+  long_desc: |
+    now we can store
+      all indentation
+    and related things
+  processing_payment: *price_variable
+  adv: &adv
+    mykey: myval
+
+  another_Adv:
+    one: tow
+    <<: *adv
+    # this will get all the key value pairs of adv here
+---
+- name: Setting up Apache webserver
+  hosts: workers
+  become: true
+  tasks:
+    - name: Install apache packages
+      yum:
+        name: httpd
+        state: present
+
+    - name: copy index.html to web root
+      copy: src=index.html dest=/var/www/html/index.html owner=apache group=apache mode=0644
+
+    - name: ensure httpd service is running
+      service:
+        name: httpd
+        state: started
+
+    - name: Open port 80 for http access
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+    - name: Restart the firewalld service to load in the firewall changes
+      service:
+        name: firewalld
+        state: restarted
